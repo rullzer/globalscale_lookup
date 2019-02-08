@@ -78,6 +78,7 @@ class LookupController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * TODO: throttle is authkey fails
+	 * TODO: verify users format
 	 */
 	public function register(string $authKey, array $users): JSONResponse {
 		if (!$this->authKeyService->isValidAuthKey($authKey)) {
@@ -96,6 +97,7 @@ class LookupController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * TODO: throttle is authkey fails
+	 * TODO: verify users array
 	 */
 	public function remove(string $authKey, array $users): JSONResponse {
 		if (!$this->authKeyService->isValidAuthKey($authKey)) {
