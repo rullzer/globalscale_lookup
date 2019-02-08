@@ -24,21 +24,53 @@ declare(strict_types=1);
 
 namespace OCA\GlobalScaleLookup\Service;
 
+use OCA\GlobalScaleLookup\Db\Store;
+use OCA\GlobalScaleLookup\Db\StoreMapper;
+use OCA\GlobalScaleLookup\Db\User;
+use OCA\GlobalScaleLookup\Db\UserMapper;
+use OCP\AppFramework\Db\DoesNotExistException;
+
 class UserService {
 
+	/** @var UserMapper */
+	private $userMapper;
+	/** @var StoreMapper */
+	private $storeMapper;
+
+	public function __construct(UserMapper $userMapper, StoreMapper $storeMapper) {
+		$this->userMapper = $userMapper;
+		$this->storeMapper = $storeMapper;
+	}
+
 	public function insertOrUpdate(string $cloudId, array $data): void {
+		try {
+			$user = $this->userMapper->findUserByCloudId($cloudId);
+		} catch (DoesNotExistException $e) {
+			$user = new User();
+			$user->setFederationId($cloudId);
+			$user = $this->userMapper->insert($user);
+		}
 
-	}
+		$this->storeMapper->clearForUserId($user->getId());
 
-	private function insertUser(string $cloudId, array $data): void {
-
-	}
-
-	private function updateUser(string $cloudId, array $data): void {
-
+		// TODO: verify fields?
+		foreach ($data as $key => $value) {
+			$store = new Store();
+			$store->setUserId($user->getId());
+			$store->setKey($key);
+			$store->setValue($value);
+			$this->storeMapper->insert($store);
+		}
 	}
 
 	public function delete(string $cloudId): void {
+		try {
+			$user = $this->userMapper->findUserByCloudId($cloudId);
+		} catch (DoesNotExistException $e) {
+			return;
+		}
 
+		$this->storeMapper->clearForUserId($user->getId());
+		$this->userMapper->delete($user);
 	}
 }

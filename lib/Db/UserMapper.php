@@ -32,7 +32,7 @@ class UserMapper extends QBMapper {
 		parent::__construct($db, 'gslookup_users', User::class);
 	}
 
-	public function findUsers(array $userIds) {
+	public function findUsers(array $userIds): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
@@ -41,5 +41,20 @@ class UserMapper extends QBMapper {
 			);
 
 		return $this->findEntities($qb);
+	}
+
+	/**
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 * @throws \OCP\AppFramework\Db\MultipleObjectsReturnedException
+	 */
+	public function findUserByCloudId(string $cloudId): User {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where(
+				$qb->expr()->eq('federation_id', $cloudId)
+			);
+
+		return $this->findEntity($qb);
 	}
 }
