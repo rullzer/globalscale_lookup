@@ -62,7 +62,7 @@ class Version1000Date20190208150228 extends SimpleMigrationStep {
 			'unsigned' => true,
 		]);
 		$table->setPrimaryKey(['id']);
-		$table->addIndex(['federationId']);
+		$table->addUniqueIndex(['federationId']);
 
 		$table = $schema->createTable('gslookup_store');
 		$table->addColumn('id', Type::BIGINT, [
@@ -88,6 +88,7 @@ class Version1000Date20190208150228 extends SimpleMigrationStep {
 		$table->setPrimaryKey(['id']);
 		$table->addIndex(['user_id']);
 		$table->addIndex(['value']);
+		$table->addUniqueIndex(['user_id', 'key']);
 
 		return $schema;
 	}
