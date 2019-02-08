@@ -1,0 +1,14 @@
+* See inline code todos
+
+* Testing if it actualy works
+* Settings page?
+
+Migration:
+* CLI command to import from old LO
+* Write export for old LO
+* Probably just plain json would be good enough
+
+
+* Integration tests!
+
+* Stats (how many users in the LO etc)?
