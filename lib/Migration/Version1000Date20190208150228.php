@@ -56,11 +56,6 @@ class Version1000Date20190208150228 extends SimpleMigrationStep {
 			'notnull' => true,
 			'length' => 255,
 		]);
-		$table->addColumn('timestamp', Type::BIGINT, [
-			'notnull' => true,
-			'length' => 20,
-			'unsigned' => true,
-		]);
 		$table->setPrimaryKey(['id']);
 		$table->addUniqueIndex(['federation_id']);
 

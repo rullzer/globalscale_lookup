@@ -52,7 +52,7 @@ class UserMapper extends QBMapper {
 		$qb->select('*')
 			->from($this->getTableName())
 			->where(
-				$qb->expr()->eq('federation_id', $cloudId)
+				$qb->expr()->eq('federation_id', $qb->createNamedParameter($cloudId))
 			);
 
 		return $this->findEntity($qb);
