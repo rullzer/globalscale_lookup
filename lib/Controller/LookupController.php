@@ -63,7 +63,7 @@ class LookupController extends Controller {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$keys = json_decode($keys, false, 2);
+		$keys = json_decode($keys, true, 2);
 		if ($keys === null) {
 			$keys = [];
 		}
