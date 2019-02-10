@@ -28,6 +28,7 @@ use OCA\GlobalScaleLookup\Db\Store;
 use OCA\GlobalScaleLookup\Db\StoreMapper;
 use OCA\GlobalScaleLookup\Db\User;
 use OCA\GlobalScaleLookup\Db\UserMapper;
+use OCP\AppFramework\Db\DoesNotExistException;
 
 class SearchService {
 	/** @var StoreMapper */
@@ -40,7 +41,25 @@ class SearchService {
 		$this->userMapper = $userMapper;
 	}
 
-	public function search(string $search, bool $exact, array $keys): array {
+	public function search(string $search, bool $exact, array $keys, bool $exactCloudId): array {
+4		if ($exactCloudId) {
+			return $this->getExactCloudId($search);
+		}
+
+		return $this->genericSearch($search, $exact, $keys);
+	}
+
+	protected function getExactCloudId(string $search): array {
+		try {
+			$user = $this->userMapper->findUserByCloudId($search);
+		} catch (DoesNotExistException $e) {
+			return [];
+		}
+
+		return $this->userToResult($user);
+	}
+
+	protected function genericSearch(string $search, bool $exact, array $keys): array {
 		$userIds = $this->storeMapper->searchInValues($search, $exact, $keys);
 
 		/** @var User[] $users */
@@ -48,20 +67,24 @@ class SearchService {
 
 		$results = [];
 		foreach ($users as $user) {
-			$result = [
-				'federationId' => $user->getFederationId()
-			];
-
-			/** @var Store[] $stores */
-			$stores = $this->storeMapper->getByUserId($user->getId());
-
-			foreach ($stores as $store) {
-				$result[$store->getKey()] = $store->getValue();
-			}
-
-			$results[] = $result;
+			$results[] = $this->userToResult($user);
 		}
 
 		return $results;
+	}
+
+	protected function userToResult(User $user): array {
+		$result = [
+			'federationId' => $user->getFederationId()
+		];
+
+		/** @var Store[] $stores */
+		$stores = $this->storeMapper->getByUserId($user->getId());
+
+		foreach ($stores as $store) {
+			$result[$store->getKey()] = $store->getValue();
+		}
+
+		return $result;
 	}
 }

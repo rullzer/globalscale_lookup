@@ -58,7 +58,7 @@ class LookupController extends Controller {
 	 *
 	 * TODO: add option to limit request to certain subnets, block/throttle otherwise
 	 */
-	public function search(string $search = '', bool $exact = false, string $keys = '{}'): JSONResponse {
+	public function search(string $search = '', bool $exact = false, string $keys = '{}', bool $exactCloudId = false): JSONResponse {
 		if ($search === '') {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -68,7 +68,7 @@ class LookupController extends Controller {
 			$keys = [];
 		}
 		
-		$data = $this->searchService->search($search, $exact, $keys);
+		$data = $this->searchService->search($search, $exact, $keys, $exactCloudId);
 
 		return new JSONResponse($data);
 	}
