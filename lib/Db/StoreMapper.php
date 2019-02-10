@@ -72,7 +72,8 @@ class StoreMapper extends QBMapper {
 		}
 
 		$qb->groupBy('user_id');
-		$qb->orderBy('matches','user_id');
+		$qb->orderBy('matches');
+		$qb->addOrderBy('user_id');
 		$qb->setMaxResults(50);
 
 		$cursor = $qb->execute();
