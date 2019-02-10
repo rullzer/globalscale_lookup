@@ -78,8 +78,6 @@ class LookupController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * @BruteForceProtection(action=gslookup_modify)
-	 *
-	 * TODO: verify users format
 	 */
 	public function register(string $authKey, array $users): JSONResponse {
 		if (!$this->authKeyService->isValidAuthKey($authKey)) {
@@ -89,6 +87,9 @@ class LookupController extends Controller {
 		}
 
 		foreach ($users as $cloudId => $data) {
+			if (!is_string($cloudId) || !$this->validateKVArrays($data)) {
+				continue;
+			}
 			$this->userService->insertOrUpdate($cloudId, $data);
 		}
 
@@ -100,8 +101,6 @@ class LookupController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * @BruteForceProtection(action=gslookup_modify)
-	 *
-	 * TODO: verify users array
 	 */
 	public function remove(string $authKey, array $users): JSONResponse {
 		if (!$this->authKeyService->isValidAuthKey($authKey)) {
@@ -111,10 +110,24 @@ class LookupController extends Controller {
 		}
 
 		foreach ($users as $cloudId) {
+			if (!is_string($cloudId)) {
+				// If they are not strings we can't do anything
+				continue;
+			}
 			$this->userService->delete($cloudId);
 		}
 
 		return new JSONResponse();
-		
+	}
+
+	private function validateKVArrays(array $data): bool {
+		$keys = array_keys($data);
+		$values = array_values($data);
+
+		$reduce = function($carry, $value) {
+			return $carry && is_string($value);
+		};
+
+		return array_reduce($keys, $reduce, true) && array_reduce($values, $reduce, true);
 	}
 }
