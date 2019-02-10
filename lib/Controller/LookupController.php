@@ -77,12 +77,15 @@ class LookupController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
-	 * TODO: throttle is authkey fails
+	 * @BruteForceProtection(action=gslookup_modify)
+	 *
 	 * TODO: verify users format
 	 */
 	public function register(string $authKey, array $users): JSONResponse {
 		if (!$this->authKeyService->isValidAuthKey($authKey)) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			$response = new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			$response->throttle();
+			return $response;
 		}
 
 		foreach ($users as $cloudId => $data) {
@@ -96,12 +99,15 @@ class LookupController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
-	 * TODO: throttle is authkey fails
+	 * @BruteForceProtection(action=gslookup_modify)
+	 *
 	 * TODO: verify users array
 	 */
 	public function remove(string $authKey, array $users): JSONResponse {
 		if (!$this->authKeyService->isValidAuthKey($authKey)) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			$response = new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			$response->throttle();
+			return $response;
 		}
 
 		foreach ($users as $cloudId) {

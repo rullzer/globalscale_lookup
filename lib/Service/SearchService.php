@@ -42,7 +42,7 @@ class SearchService {
 	}
 
 	public function search(string $search, bool $exact, array $keys, bool $exactCloudId): array {
-4		if ($exactCloudId) {
+		if ($exactCloudId) {
 			return $this->getExactCloudId($search);
 		}
 
