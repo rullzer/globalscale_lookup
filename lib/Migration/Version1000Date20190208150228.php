@@ -22,7 +22,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Lookup\Migration;
+namespace OCA\GlobalScaleLookup\Migration;
 
 use Closure;
 use Doctrine\DBAL\Types\Type;
